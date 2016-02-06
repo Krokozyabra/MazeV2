@@ -31,7 +31,7 @@ public class Generator_d implements Paintable{
 
 				Cell randomNeighborCell = getRandomNotVisistedNeighbor(x, y);
 				breakWall(x, y, randomNeighborCell);
-
+				
 				x = randomNeighborCell.x;
 				y = randomNeighborCell.y;
 				makeVisited(x, y);
@@ -44,8 +44,6 @@ public class Generator_d implements Paintable{
 			}catch(Exception ex){
 			}*/
 		}
-
-
 		return returnCells();
 	}
 

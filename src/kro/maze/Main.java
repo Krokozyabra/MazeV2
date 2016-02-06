@@ -41,8 +41,8 @@ public class Main implements Paintable{
 
 	KFrame kFrame;
 	Properties properties = new Properties();// настройки
-
-
+	Timer timer;
+	
 	Generator_d generator_d;
 	Solver_h solver_h;
 	Solver_d solver_d;
@@ -73,6 +73,7 @@ public class Main implements Paintable{
 	public Main(){
 		deser();// десериализация настроек
 		openWindow();// открытие окна
+		timer = new Timer();
 		paintThread.start();
 		generate_d();
 	}
@@ -210,8 +211,11 @@ public class Main implements Paintable{
 	public void generate_d(){
 		new Thread(new Runnable(){
 			public void run(){
+				timer.reset();
+				timer.start();
 				generator_d = new Generator_d(properties);
 				cells = generator_d.generate();
+				timer.stop();
 			}
 		}).start();
 	}
@@ -219,8 +223,11 @@ public class Main implements Paintable{
 	public void solve_h(){
 		new Thread(new Runnable(){
 			public void run(){
+				timer.reset();
+				timer.start();
 				solver_h = new Solver_h(properties, cells);
 				solver_h.solve();
+				timer.stop();
 			}
 		}).start();
 	}
@@ -228,8 +235,11 @@ public class Main implements Paintable{
 	public void solve_d(){
 		new Thread(new Runnable(){
 			public void run(){
+				timer.reset();
+				timer.start();
 				solver_d = new Solver_d(properties, cells);
 				solver_d.solve();
+				timer.stop();
 			}
 		}).start();
 	}
@@ -237,8 +247,11 @@ public class Main implements Paintable{
 	private void solve_w(){
 		new Thread(new Runnable(){
 			public void run(){
+				timer.reset();
+				timer.start();
 				solver_w = new Solver_w(properties, cells);
 				solver_w.solve();
+				timer.stop();
 			}
 		}).start();
 	}
@@ -280,6 +293,8 @@ public class Main implements Paintable{
 			if(mode == Mode.SOLVING_w){
 				solver_w.paint(gr);
 			}
+			
+			timer.paint(gr);
 		}catch(Exception ex){
 		}
 	}

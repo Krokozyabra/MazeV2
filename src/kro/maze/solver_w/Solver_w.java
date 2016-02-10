@@ -38,6 +38,7 @@ public class Solver_w implements Paintable{
 	}
 
 	public void solve(){
+		int count = 0;
 		while(!isEnd()){
 			makeVisitedAndMarkedMovers();
 			packMovers();
@@ -50,6 +51,7 @@ public class Solver_w implements Paintable{
 				Thread.sleep(properties.delay);
 			}catch(Exception ex){
 			}
+			System.out.println(++count);
 		}
 		makeVisitedAndMarkedMovers();
 		markWay();

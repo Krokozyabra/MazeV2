@@ -38,6 +38,7 @@ public class Solver_d implements Paintable{
 	}
 
 	public void solve(){
+		int count = 0;
 		while(!(x == properties.END_CELL_X && y == properties.END_CELL_Y)){//пока не конец
 			if(getLocalNotVisitedNeighborCount(x, y) != 0){
 				makeVisited(x, y);
@@ -58,6 +59,7 @@ public class Solver_d implements Paintable{
 				Thread.sleep(properties.delay);
 			}catch(Exception ex){
 			}
+			System.out.println(++count);
 		}
 	}
 	

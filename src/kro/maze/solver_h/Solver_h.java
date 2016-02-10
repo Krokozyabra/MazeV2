@@ -53,6 +53,7 @@ public class Solver_h implements Paintable{
 
 	public void solve(){
 		mark(x, y);
+		int count = 0;
 		while(!(x == properties.END_CELL_X && y == properties.END_CELL_Y)){//пока не конец
 			changeDirection();// изменить направление
 			moveToDirection();// двигаться в направлении
@@ -60,6 +61,7 @@ public class Solver_h implements Paintable{
 				Thread.sleep(properties.delay);
 			}catch(Exception ex){
 			}
+			System.out.println(++count);
 		}
 
 	}

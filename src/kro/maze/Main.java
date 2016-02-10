@@ -31,6 +31,7 @@ import javax.swing.JPopupMenu;
 
 import kro.frame.KFrame;
 import kro.frame.Paintable;
+import kro.maze.game.Game;
 import kro.maze.generator_d.Generator_d;
 import kro.maze.solver_d.Solver_d;
 import kro.maze.solver_h.Solver_h;
@@ -38,24 +39,25 @@ import kro.maze.solver_w.Solver_w;
 
 public class Main implements Paintable{
 	enum Mode{
-		GENERATING_d, SOLVING_h, SOLVING_d, SOLVING_w
+		GENERATING_d, SOLVING_h, SOLVING_d, SOLVING_w, PLAING
 	}
 
 
 	KFrame kFrame;
 	Properties properties = new Properties();// настройки
 	Timer timer;
-	
+
 	Generator_d generator_d;
 	Solver_h solver_h;
 	Solver_d solver_d;
 	Solver_w solver_w;
+	Game game;
 
 	Cell[][] cells;
 
 	boolean settingsIsOpen = false;
-	
-	
+
+
 	int id = 0;
 
 
@@ -138,18 +140,19 @@ public class Main implements Paintable{
 			}
 		});
 
+		setPopupMenu();
 		setMenu();
 	}
 
-	private void setMenu(){// настройка контекстного мею
+	private void setPopupMenu(){// настройка контекстного меню
 		PopupMenu popupMenu = new PopupMenu();
-		MenuItem generateMenuItem = new MenuItem("Сгенерировать");
+		MenuItem generator_dMenuItem = new MenuItem("Сгенерировать");
 		MenuItem solver_hMenuItem = new MenuItem("Пройти по правилу левой руки");
 		MenuItem solver_dMenuItem = new MenuItem("Пройти методом поиска в глубину по графу");
 		MenuItem solver_wMenuItem = new MenuItem("Пройти методом поиска в ширину по графу");
 		MenuItem settingsMenuItem = new MenuItem("Открыть настройки...");
 
-		generateMenuItem.addActionListener(new ActionListener(){
+		generator_dMenuItem.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
 				mode = Mode.GENERATING_d;
 				generate_d();
@@ -182,7 +185,7 @@ public class Main implements Paintable{
 			}
 		});
 
-		popupMenu.add(generateMenuItem);
+		popupMenu.add(generator_dMenuItem);
 		popupMenu.add(solver_hMenuItem);
 		popupMenu.add(solver_dMenuItem);
 		popupMenu.add(solver_wMenuItem);
@@ -212,65 +215,80 @@ public class Main implements Paintable{
 
 			}
 		});
+
+	}
+
+	private void setMenu(){
 		JMenuBar jMenuBar = new JMenuBar();
 		kFrame.setJMenuBar(jMenuBar);
-		
+
 		JMenu generatingMenu = new JMenu("Генерация");
 		JMenu solvingMenu = new JMenu("Прохождение");
+		JMenu gameMenu = new JMenu("Игра");
 		JMenu otherMenu = new JMenu("Другое");
-		
+
 		jMenuBar.add(generatingMenu);
 		jMenuBar.add(solvingMenu);
+		jMenuBar.add(gameMenu);
 		jMenuBar.add(otherMenu);
-		
-		JMenuItem generating_dMenuItem = new JMenuItem("Метод поиска в глубину по графу");
-		generatingMenu.add(generating_dMenuItem);
-		
-		JMenuItem solving_hMenuItem = new JMenuItem("По правилу одной руки");
-		solvingMenu.add(solving_hMenuItem);
-		
-		JMenuItem solving_dMenuItem = new JMenuItem("Метод поиска в глубину по графу");
-		solvingMenu.add(solving_dMenuItem);
-		
-		JMenuItem solving_wMenuItem = new JMenuItem("Метод поиска в ширину по графу");
-		solvingMenu.add(solving_wMenuItem);
-		
-		
-		JMenuItem settingsMenuItem1 = new JMenuItem("Открыть настройки...");
-		otherMenu.add(settingsMenuItem1);
-		
+
+		JMenuItem generator_dMenuItem = new JMenuItem("Метод поиска в глубину по графу");
+		generatingMenu.add(generator_dMenuItem);
+
+		JMenuItem solver_hMenuItem = new JMenuItem("По правилу одной руки");
+		solvingMenu.add(solver_hMenuItem);
+
+		JMenuItem solver_dMenuItem = new JMenuItem("Метод поиска в глубину по графу");
+		solvingMenu.add(solver_dMenuItem);
+
+		JMenuItem solver_wMenuItem = new JMenuItem("Метод поиска в ширину по графу");
+		solvingMenu.add(solver_wMenuItem);
+
+		JMenuItem gameMenuItem = new JMenuItem("Играть!");
+		gameMenu.add(gameMenuItem);
+
+		JMenuItem settingsMenuItem = new JMenuItem("Открыть настройки...");
+		otherMenu.add(settingsMenuItem);
+
 		JMenuItem infoMenuItem = new JMenuItem("О программе");
 		otherMenu.add(infoMenuItem);
-		
-		
-		generating_dMenuItem.addActionListener(new ActionListener(){
+
+
+		generator_dMenuItem.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
 				mode = Mode.GENERATING_d;
 				generate_d();
 			}
 		});
-		
-		solving_hMenuItem.addActionListener(new ActionListener(){
+
+		solver_hMenuItem.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
 				mode = Mode.SOLVING_h;
 				solve_h();
 			}
 		});
-		
-		solving_dMenuItem.addActionListener(new ActionListener(){
+
+		solver_dMenuItem.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
 				mode = Mode.SOLVING_d;
 				solve_d();
 			}
 		});
-		
-		solving_wMenuItem.addActionListener(new ActionListener(){
+
+		solver_wMenuItem.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
 				mode = Mode.SOLVING_w;
 				solve_w();
 			}
 		});
-		
+
+		gameMenuItem.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e){
+				mode = Mode.PLAING;
+				play();
+			}
+		});
+
 		settingsMenuItem.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
 				if(!settingsIsOpen){
@@ -278,8 +296,8 @@ public class Main implements Paintable{
 				}
 			}
 		});
-		
-		
+
+
 		kFrame.pack();
 		jMenuBar.setBackground(Color.WHITE);
 	}
@@ -290,13 +308,13 @@ public class Main implements Paintable{
 				removeAll();
 				id++;
 				int id1 = id;
-				
+
 				timer.reset();
 				timer.start(id1);
-				
+
 				generator_d = new Generator_d(properties);
 				cells = generator_d.generate();
-				
+
 				timer.stop(id1);
 			}
 		}).start();
@@ -308,13 +326,13 @@ public class Main implements Paintable{
 				removeAll();
 				id++;
 				int id1 = id;
-				
+
 				timer.reset();
 				timer.start(id1);
-				
+
 				solver_h = new Solver_h(properties, cells);
 				solver_h.solve();
-				
+
 				timer.stop(id1);
 			}
 		}).start();
@@ -326,13 +344,13 @@ public class Main implements Paintable{
 				removeAll();
 				id++;
 				int id1 = id;
-				
+
 				timer.reset();
 				timer.start(id1);
-				
+
 				solver_d = new Solver_d(properties, cells);
 				solver_d.solve();
-				
+
 				timer.stop(id1);
 			}
 		}).start();
@@ -344,22 +362,48 @@ public class Main implements Paintable{
 				removeAll();
 				id++;
 				int id1 = id;
-				
+
 				timer.reset();
 				timer.start(id1);
 				solver_w = new Solver_w(properties, cells);
 				solver_w.solve();
-				
+
 				timer.stop(id1);
 			}
 		}).start();
 	}
-	
+
+	private void play(){
+		new Thread(new Runnable(){
+			public void run(){
+				removeAll();
+				id++;
+				int id1 = id;
+
+				timer.reset();
+				timer.start(id1);
+				game = new Game(kFrame, properties, cells);
+
+				while(!game.isEnd);
+				timer.stop(id1);
+			}
+		}).start();
+	}
+
+	private void dow(){
+
+	}
+
 	private void removeAll(){
 		generator_d = null;
 		solver_h = null;
 		solver_d = null;
 		solver_w = null;
+		try{
+			game.isEnd = true;
+		}catch(Exception ex){
+		}
+		game = null;
 	}
 
 	private void openSettings(Properties properties){
@@ -378,7 +422,7 @@ public class Main implements Paintable{
 
 		properties.END_CELL_X = properties.WIDTH - 1;
 		properties.END_CELL_Y = properties.HEIGHT - 1;
-		
+
 		properties.delay = 0;
 
 		properties.WINDOW_WIDTH = properties.WIDTH * properties.CELL_WIDTH;
@@ -400,7 +444,10 @@ public class Main implements Paintable{
 			if(mode == Mode.SOLVING_w){
 				solver_w.paint(gr);
 			}
-			
+			if(mode == Mode.PLAING){
+				game.paint(gr);
+			}
+
 			timer.paint(gr);
 		}catch(Exception ex){
 		}

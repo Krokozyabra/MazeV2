@@ -9,4 +9,6 @@ public class Colors{
 	
 	public static Color currentCellColorSolver = new Color(150, 150, 255);
 	public static Color waySolveColor = new Color(50, 50, 255);
+
+	public static Color timerColor = new Color(255, 0, 0, 230);
 }

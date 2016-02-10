@@ -54,7 +54,6 @@ public class Solver_d implements Paintable{
 				unMark(x, y);
 				goBack(x, y);
 			}
-			
 			try{
 				Thread.sleep(properties.delay);
 			}catch(Exception ex){

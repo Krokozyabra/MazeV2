@@ -1,5 +1,6 @@
 package kro.maze;
 
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.GridLayout;
 import java.awt.MenuItem;
@@ -22,6 +23,8 @@ import java.lang.reflect.Array;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
@@ -50,7 +53,10 @@ public class Main implements Paintable{
 
 	Cell[][] cells;
 
-	boolean settingIsOpen = false;
+	boolean settingsIsOpen = false;
+	
+	
+	int id = 0;
 
 
 	Mode mode = Mode.GENERATING_d;//режим: генерация-прохождение
@@ -73,7 +79,7 @@ public class Main implements Paintable{
 	public Main(){
 		deser();// десериализация настроек
 		openWindow();// открытие окна
-		timer = new Timer();
+		timer = new Timer(properties);
 		paintThread.start();
 		generate_d();
 	}
@@ -170,7 +176,7 @@ public class Main implements Paintable{
 		});
 		settingsMenuItem.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
-				if(!settingIsOpen){
+				if(!settingsIsOpen){
 					openSettings(properties);
 				}
 			}
@@ -206,16 +212,92 @@ public class Main implements Paintable{
 
 			}
 		});
+		JMenuBar jMenuBar = new JMenuBar();
+		kFrame.setJMenuBar(jMenuBar);
+		
+		JMenu generatingMenu = new JMenu("Генерация");
+		JMenu solvingMenu = new JMenu("Прохождение");
+		JMenu otherMenu = new JMenu("Другое");
+		
+		jMenuBar.add(generatingMenu);
+		jMenuBar.add(solvingMenu);
+		jMenuBar.add(otherMenu);
+		
+		JMenuItem generating_dMenuItem = new JMenuItem("Метод поиска в глубину по графу");
+		generatingMenu.add(generating_dMenuItem);
+		
+		JMenuItem solving_hMenuItem = new JMenuItem("По правилу одной руки");
+		solvingMenu.add(solving_hMenuItem);
+		
+		JMenuItem solving_dMenuItem = new JMenuItem("Метод поиска в глубину по графу");
+		solvingMenu.add(solving_dMenuItem);
+		
+		JMenuItem solving_wMenuItem = new JMenuItem("Метод поиска в ширину по графу");
+		solvingMenu.add(solving_wMenuItem);
+		
+		
+		JMenuItem settingsMenuItem1 = new JMenuItem("Открыть настройки...");
+		otherMenu.add(settingsMenuItem1);
+		
+		JMenuItem infoMenuItem = new JMenuItem("О программе");
+		otherMenu.add(infoMenuItem);
+		
+		
+		generating_dMenuItem.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e){
+				mode = Mode.GENERATING_d;
+				generate_d();
+			}
+		});
+		
+		solving_hMenuItem.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e){
+				mode = Mode.SOLVING_h;
+				solve_h();
+			}
+		});
+		
+		solving_dMenuItem.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e){
+				mode = Mode.SOLVING_d;
+				solve_d();
+			}
+		});
+		
+		solving_wMenuItem.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e){
+				mode = Mode.SOLVING_w;
+				solve_w();
+			}
+		});
+		
+		settingsMenuItem.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e){
+				if(!settingsIsOpen){
+					openSettings(properties);
+				}
+			}
+		});
+		
+		
+		kFrame.pack();
+		jMenuBar.setBackground(Color.WHITE);
 	}
 
 	public void generate_d(){
 		new Thread(new Runnable(){
 			public void run(){
+				removeAll();
+				id++;
+				int id1 = id;
+				
 				timer.reset();
-				timer.start();
+				timer.start(id1);
+				
 				generator_d = new Generator_d(properties);
 				cells = generator_d.generate();
-				timer.stop();
+				
+				timer.stop(id1);
 			}
 		}).start();
 	}
@@ -223,11 +305,17 @@ public class Main implements Paintable{
 	public void solve_h(){
 		new Thread(new Runnable(){
 			public void run(){
+				removeAll();
+				id++;
+				int id1 = id;
+				
 				timer.reset();
-				timer.start();
+				timer.start(id1);
+				
 				solver_h = new Solver_h(properties, cells);
 				solver_h.solve();
-				timer.stop();
+				
+				timer.stop(id1);
 			}
 		}).start();
 	}
@@ -235,11 +323,17 @@ public class Main implements Paintable{
 	public void solve_d(){
 		new Thread(new Runnable(){
 			public void run(){
+				removeAll();
+				id++;
+				int id1 = id;
+				
 				timer.reset();
-				timer.start();
+				timer.start(id1);
+				
 				solver_d = new Solver_d(properties, cells);
 				solver_d.solve();
-				timer.stop();
+				
+				timer.stop(id1);
 			}
 		}).start();
 	}
@@ -247,17 +341,30 @@ public class Main implements Paintable{
 	private void solve_w(){
 		new Thread(new Runnable(){
 			public void run(){
+				removeAll();
+				id++;
+				int id1 = id;
+				
 				timer.reset();
-				timer.start();
+				timer.start(id1);
 				solver_w = new Solver_w(properties, cells);
 				solver_w.solve();
-				timer.stop();
+				
+				timer.stop(id1);
 			}
 		}).start();
+	}
+	
+	private void removeAll(){
+		generator_d = null;
+		solver_h = null;
+		solver_d = null;
+		solver_w = null;
 	}
 
 	private void openSettings(Properties properties){
 		new Settings(properties, kFrame, this);
+		settingsIsOpen = true;
 	}
 
 	private void setupDefSettings(){//дефолтные настройки

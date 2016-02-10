@@ -46,7 +46,6 @@ public class Solver_w implements Paintable{
 			packMovers();
 
 			move();
-			
 			try{
 				Thread.sleep(properties.delay);
 			}catch(Exception ex){

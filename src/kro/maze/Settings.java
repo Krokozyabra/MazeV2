@@ -21,11 +21,11 @@ import kro.frame.KFrame;
 import kro.maze.Main.Mode;
 
 public class Settings extends JFrame{
-	JLabel widthLabel = new JLabel("Ширина в клетках: ");
-	JLabel heightLabel = new JLabel("Высота в клетках: ");
-	JLabel cellWidthLabel = new JLabel("Ширина клетки: ");
-	JLabel cellHeightLabel = new JLabel("Высота клетки: ");
-	JLabel delayLabel = new JLabel("Задержка: ");
+	JLabel widthLabel = new JLabel("Ширина поля, клетки: ");
+	JLabel heightLabel = new JLabel("Высота поля, клетки: ");
+	JLabel cellWidthLabel = new JLabel("Ширина клетки, пиксели: ");
+	JLabel cellHeightLabel = new JLabel("Высота клетки, пиксели: ");
+	JLabel delayLabel = new JLabel("Задержка, мс: ");
 
 	JTextField widthField = new JTextField(5);
 	JTextField heightField = new JTextField(5);
@@ -102,7 +102,7 @@ public class Settings extends JFrame{
 			}
 			
 			public void windowClosing(WindowEvent e){
-				
+				main.settingsIsOpen = false;
 			}
 			
 			public void windowClosed(WindowEvent e){
@@ -130,7 +130,7 @@ public class Settings extends JFrame{
 		try{
 			changeSettings();
 			
-			if(properties.WINDOW_WIDTH < 130 || properties.WINDOW_HEIGHT < 60 || properties.WIDTH % 2 == 0 || properties.HEIGHT % 2 == 0){
+			if(properties.WINDOW_WIDTH < 223 || properties.WINDOW_HEIGHT < 60 || properties.WIDTH % 2 == 0 || properties.HEIGHT % 2 == 0){
 				throw new Exception();
 			}
 			kFrame.setSize(properties.WINDOW_WIDTH, properties.WINDOW_HEIGHT);
@@ -142,6 +142,7 @@ public class Settings extends JFrame{
 			if(properties.WIDTH != _properties.WIDTH || properties.HEIGHT != _properties.HEIGHT){
 				main.generate_d();//автоматическая генерция после выхода из настроек
 			}
+			main.settingsIsOpen = false;
 		}catch(Exception ex){
 			resetSettings();
 			JOptionPane.showMessageDialog(null, "Неккоректно введено число!", "Ошибка", JOptionPane.ERROR_MESSAGE);
@@ -205,7 +206,6 @@ public class Settings extends JFrame{
 					isShowing = true;
 				}
 			}
-
 			public void focusGained(FocusEvent e){
 				jTextField.setForeground(new Color(0, 0, 0));
 				if(isShowing){

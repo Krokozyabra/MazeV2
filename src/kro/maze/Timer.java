@@ -73,7 +73,7 @@ public class Timer implements Paintable{
 	}
 
 	public void paint(Graphics2D gr){
-		gr.setColor(new Color(255, 255, 255, 230));
+		gr.setColor(Colors.timerBackgroundColor);
 		gr.fillRect(0, properties.WINDOW_HEIGHT - 18, 14 * Integer.toString(milliSeconds).length() + 1, 18);
 
 		gr.setFont(font);

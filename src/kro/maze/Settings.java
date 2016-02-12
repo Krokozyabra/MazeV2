@@ -130,7 +130,7 @@ public class Settings extends JFrame{
 		try{
 			changeSettings();
 			
-			if(properties.WINDOW_WIDTH < 223 || properties.WINDOW_HEIGHT < 60 || properties.WIDTH % 2 == 0 || properties.HEIGHT % 2 == 0){
+			if(properties.WINDOW_WIDTH < 262 || properties.WINDOW_HEIGHT < 60 || properties.WIDTH % 2 == 0 || properties.HEIGHT % 2 == 0){
 				throw new Exception();
 			}
 			kFrame.setSize(properties.WINDOW_WIDTH, properties.WINDOW_HEIGHT);

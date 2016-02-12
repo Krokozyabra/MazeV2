@@ -108,6 +108,7 @@ public class Main implements Paintable{
 
 	private void openWindow(){
 		kFrame = new KFrame(properties.WINDOW_WIDTH, properties.WINDOW_HEIGHT, "MAZE", 4, this);
+		kFrame.setAlwaysOnTop(true);
 		kFrame.setVisible(true);
 		kFrame.addWindowListener(new WindowListener(){//для сериалзации
 
@@ -222,10 +223,10 @@ public class Main implements Paintable{
 		JMenuBar jMenuBar = new JMenuBar();
 		kFrame.setJMenuBar(jMenuBar);
 
-		JMenu generatingMenu = new JMenu("Генерация");
+		JMenu generatingMenu = new JMenu("Сегенерировать лабиринт");
 		JMenu solvingMenu = new JMenu("Прохождение");
 		JMenu gameMenu = new JMenu("Игра");
-		JMenu otherMenu = new JMenu("Другое");
+		JMenu otherMenu = new JMenu("Настройки");
 
 		jMenuBar.add(generatingMenu);
 		jMenuBar.add(solvingMenu);
@@ -388,10 +389,6 @@ public class Main implements Paintable{
 				timer.stop(id1);
 			}
 		}).start();
-	}
-
-	private void dow(){
-
 	}
 
 	private void removeAll(){

@@ -276,13 +276,13 @@ public class Solver_w implements Paintable{
 	}
 
 	public void paint(Graphics2D gr){
-		gr.setColor(Colors.wayColor);
+		gr.setColor(Colors.breakedColor);
 		gr.fillRect(0, 0, properties.WINDOW_WIDTH, properties.WINDOW_HEIGHT);
 
 		for(int xx = 0; xx < cells.length; xx++){
 			for(int yy = 0; yy < cells[0].length; yy++){
 				if(!isBreaked(xx, yy)){
-					gr.setColor(Colors.wallColor);
+					gr.setColor(Colors.notBreakedColor);
 					gr.fillRect(xx * properties.CELL_WIDTH, yy * properties.CELL_HEIGHT, properties.CELL_WIDTH, properties.CELL_HEIGHT);
 				}
 				if(isMarked(xx, yy)){
@@ -300,13 +300,13 @@ public class Solver_w implements Paintable{
 				}
 
 				if(isWayMarked(xx, yy)){
-					gr.setColor(Colors.waySolveColor);
+					gr.setColor(Colors.wayColor);
 					gr.fillRect(xx * properties.CELL_WIDTH, yy * properties.CELL_HEIGHT, properties.CELL_WIDTH, properties.CELL_HEIGHT);
 				}
 				try{
 					if(cells[xx][yy].type == CellType.WALL && isBreaked(xx, yy)){
 						if((isWayMarked(xx + 1, yy) && isWayMarked(xx - 1, yy)) || (isWayMarked(xx, yy + 1) && isWayMarked(xx, yy - 1))){
-							gr.setColor(Colors.waySolveColor);
+							gr.setColor(Colors.wayColor);
 							gr.fillRect(xx * properties.CELL_WIDTH, yy * properties.CELL_HEIGHT, properties.CELL_WIDTH, properties.CELL_HEIGHT);
 						}
 					}

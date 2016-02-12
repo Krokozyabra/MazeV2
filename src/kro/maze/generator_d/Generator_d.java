@@ -227,14 +227,14 @@ public class Generator_d implements Paintable{
 	}
 
 	public void paint(Graphics2D gr){
-		gr.setColor(Colors.wayColor);
+		gr.setColor(Colors.breakedColor);
 		gr.fillRect(0, 0, properties.WINDOW_WIDTH, properties.WINDOW_HEIGHT);
 
 		for(int xx = 0; xx < cells.length; xx++){
 			for(int yy = 0; yy < cells[xx].length; yy++){
 				// изменение цвета прорисовки клеток в зависимости от их типов
 				if(cells[xx][yy].type == CellType.POLE || cells[xx][yy].type == CellType.WALL && !isBreaked(xx, yy)){
-					gr.setColor(Colors.wallColor);
+					gr.setColor(Colors.notBreakedColor);
 					gr.fillRect(xx * properties.CELL_WIDTH, yy * properties.CELL_HEIGHT, properties.CELL_WIDTH, properties.CELL_HEIGHT);
 				}
 				if(cells[xx][yy].x == x && cells[xx][yy].y == y){

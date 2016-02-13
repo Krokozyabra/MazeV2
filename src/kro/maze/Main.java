@@ -36,6 +36,7 @@ import kro.maze.generator_d.Generator_d;
 import kro.maze.solver_d.Solver_d;
 import kro.maze.solver_h.Solver_h;
 import kro.maze.solver_w.Solver_w;
+import kro.maze.solver_w.Solver_w;
 
 public class Main implements Paintable{
 	enum Mode{
@@ -45,7 +46,7 @@ public class Main implements Paintable{
 
 	KFrame kFrame;
 	Properties properties = new Properties();// настройки
-	Timer timer;
+	TimerUI timer;
 
 	Generator_d generator_d;
 	Solver_h solver_h;
@@ -68,6 +69,7 @@ public class Main implements Paintable{
 			do{
 				try{
 					kFrame.paint();
+					Thread.sleep(1000 / 60);
 				}catch(Exception ex){
 				}
 			}while(true);
@@ -81,9 +83,18 @@ public class Main implements Paintable{
 	public Main(){
 		deser();// десериализация настроек
 		openWindow();// открытие окна
-		timer = new Timer(properties);
+		timer = new TimerUI(properties);
 		paintThread.start();
-		generate_d();
+		new Thread(new Runnable(){
+			public void run(){
+				generate_d();
+			}
+		}).start();
+		try{
+			Thread.sleep(100);
+		}catch(Exception ex){
+		}
+		//test();
 	}
 
 	private void deser(){
@@ -108,7 +119,6 @@ public class Main implements Paintable{
 
 	private void openWindow(){
 		kFrame = new KFrame(properties.WINDOW_WIDTH, properties.WINDOW_HEIGHT, "MAZE", 4, this);
-		kFrame.setAlwaysOnTop(true);
 		kFrame.setVisible(true);
 		kFrame.addWindowListener(new WindowListener(){//для сериалзации
 
@@ -163,19 +173,31 @@ public class Main implements Paintable{
 		solver_hMenuItem.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
 				mode = Mode.SOLVING_h;
-				solve_h();
+				new Thread(new Runnable(){
+					public void run(){
+						solve_h();
+					}
+				}).start();
 			}
 		});
 		solver_dMenuItem.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
 				mode = Mode.SOLVING_d;
-				solve_d();
+				new Thread(new Runnable(){
+					public void run(){
+						solve_d();
+					}
+				}).start();
 			}
 		});
 		solver_wMenuItem.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
 				mode = Mode.SOLVING_w;
-				solve_w();
+				new Thread(new Runnable(){
+					public void run(){
+						solve_w();
+					}
+				}).start();
 			}
 		});
 		settingsMenuItem.addActionListener(new ActionListener(){
@@ -242,7 +264,7 @@ public class Main implements Paintable{
 		JMenuItem solver_dMenuItem = new JMenuItem("Метод поиска в глубину по графу");
 		solvingMenu.add(solver_dMenuItem);
 
-		JMenuItem solver_wMenuItem = new JMenuItem("Метод поиска в ширину по графу");
+		JMenuItem solver_wMenuItem = new JMenuItem("Волновой алгоритм");
 		solvingMenu.add(solver_wMenuItem);
 
 		JMenuItem gameMenuItem = new JMenuItem("Играть!");
@@ -265,21 +287,33 @@ public class Main implements Paintable{
 		solver_hMenuItem.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
 				mode = Mode.SOLVING_h;
-				solve_h();
+				new Thread(new Runnable(){
+					public void run(){
+						solve_h();
+					}
+				}).start();
 			}
 		});
 
 		solver_dMenuItem.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
 				mode = Mode.SOLVING_d;
-				solve_d();
+				new Thread(new Runnable(){
+					public void run(){
+						solve_d();
+					}
+				}).start();
 			}
 		});
 
 		solver_wMenuItem.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
 				mode = Mode.SOLVING_w;
-				solve_w();
+				new Thread(new Runnable(){
+					public void run(){
+						solve_w();
+					}
+				}).start();
 			}
 		});
 
@@ -304,74 +338,58 @@ public class Main implements Paintable{
 	}
 
 	public void generate_d(){
-		new Thread(new Runnable(){
-			public void run(){
-				removeAll();
-				id++;
-				int id1 = id;
+		removeAll();
+		id++;
+		int id1 = id;
 
-				timer.reset();
-				timer.start(id1);
+		timer.reset();
+		timer.start(id1);
 
-				generator_d = new Generator_d(properties);
-				cells = generator_d.generate();
+		generator_d = new Generator_d(properties);
+		cells = generator_d.generate();
 
-				timer.stop(id1);
-			}
-		}).start();
+		timer.stop(id1);
 	}
 
 	public void solve_h(){
-		new Thread(new Runnable(){
-			public void run(){
-				removeAll();
-				id++;
-				int id1 = id;
+		removeAll();
+		id++;
+		int id1 = id;
 
-				timer.reset();
-				timer.start(id1);
+		timer.reset();
+		timer.start(id1);
 
-				solver_h = new Solver_h(properties, cells);
-				solver_h.solve();
+		solver_h = new Solver_h(properties, cells);
+		solver_h.solve();
 
-				timer.stop(id1);
-			}
-		}).start();
+		timer.stop(id1);
 	}
 
 	public void solve_d(){
-		new Thread(new Runnable(){
-			public void run(){
-				removeAll();
-				id++;
-				int id1 = id;
+		removeAll();
+		id++;
+		int id1 = id;
 
-				timer.reset();
-				timer.start(id1);
+		timer.reset();
+		timer.start(id1);
 
-				solver_d = new Solver_d(properties, cells);
-				solver_d.solve();
+		solver_d = new Solver_d(properties, cells);
+		solver_d.solve();
 
-				timer.stop(id1);
-			}
-		}).start();
+		timer.stop(id1);
 	}
 
 	private void solve_w(){
-		new Thread(new Runnable(){
-			public void run(){
-				removeAll();
-				id++;
-				int id1 = id;
+		removeAll();
+		id++;
+		int id1 = id;
 
-				timer.reset();
-				timer.start(id1);
-				solver_w = new Solver_w(properties, cells);
-				solver_w.solve();
+		timer.reset();
+		timer.start(id1);
+		solver_w = new Solver_w(properties, cells);
+		solver_w.solve();
 
-				timer.stop(id1);
-			}
-		}).start();
+		timer.stop(id1);
 	}
 
 	private void play(){
@@ -385,7 +403,8 @@ public class Main implements Paintable{
 				timer.start(id1);
 				game = new Game(kFrame, properties, cells);
 
-				while(!game.isEnd);
+				while(!game.isEnd)
+					;
 				timer.stop(id1);
 			}
 		}).start();
@@ -402,6 +421,53 @@ public class Main implements Paintable{
 		}
 		game = null;
 	}
+
+
+	private void test(){
+		int _delay = properties.generatorDelay;
+		properties.generatorDelay = 0;
+		
+		int count = 50001;
+		int[][] times = new int[count][3];
+		int[][] steps = new int[count][3];
+		for(int i = 0; i < count; i++){
+			mode = Mode.GENERATING_d;
+			generate_d();
+			
+			mode = Mode.SOLVING_h;
+			solve_h();
+			times[i][0] = timer.milliSeconds;
+			steps[i][0] = solver_h.getStepNumber();
+
+			mode = Mode.SOLVING_d;
+			solve_d();
+			times[i][1] = timer.milliSeconds;
+			steps[i][1] = solver_d.getStepNumber();
+
+			mode = Mode.SOLVING_w;
+			solve_w();
+			times[i][2] = timer.milliSeconds;
+			steps[i][2] = solver_w.getStepNumber();
+		}
+		for(int i = 0; i < times.length; i++){
+			for(int j = 0; j < 3; j++){
+				System.out.print(times[i][j] + " ");
+			}
+			System.out.println();
+		}
+		System.out.println();
+		System.out.println();
+		System.out.println();
+		for(int i = 0; i < steps.length; i++){
+			for(int j = 0; j < 3; j++){
+				System.out.print(steps[i][j] + " ");
+			}
+			System.out.println();
+		}
+		
+		properties.generatorDelay = _delay;
+	}
+
 
 	private void openSettings(Properties properties){
 		new Settings(properties, kFrame, this);
@@ -420,7 +486,8 @@ public class Main implements Paintable{
 		properties.END_CELL_X = properties.WIDTH - 1;
 		properties.END_CELL_Y = properties.HEIGHT - 1;
 
-		properties.delay = 0;
+		properties.solverDelay = 0;
+		properties.generatorDelay = 0;
 
 		properties.WINDOW_WIDTH = properties.WIDTH * properties.CELL_WIDTH;
 		properties.WINDOW_HEIGHT = properties.HEIGHT * properties.CELL_HEIGHT;

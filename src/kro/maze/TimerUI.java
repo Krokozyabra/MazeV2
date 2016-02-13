@@ -8,40 +8,38 @@ import java.awt.Shape;
 import java.awt.font.TextLayout;
 import java.awt.geom.AffineTransform;
 import java.io.IOException;
+import java.util.Timer;
+import java.util.TimerTask;
+
+import com.sun.org.apache.bcel.internal.generic.NEW;
 
 import kro.Downloader;
 import kro.frame.Paintable;
 import kro.maze.Main.Mode;
 
-public class Timer implements Paintable{
-	boolean isStarted = false;
-	int milliSeconds = 0;
+public class TimerUI implements Paintable{
+	volatile int milliSeconds = 0;
 
 	Font font;
 	Properties properties;
 
 	public int id = 0;
-	
-	Thread thread;
 
-	public Timer(Properties properties){
+	Timer timer = new Timer(true);
+
+	public TimerUI(Properties properties){
 		this.properties = properties;
-		init();
 		setFont();
 	}
-	
-	public void init(){
-		thread = new Thread(new Runnable(){
+
+	public void shedule() throws Exception{
+		timer.cancel();
+		timer = new Timer(true);
+		timer.schedule(new TimerTask(){
 			public void run(){
-				while(isStarted){
-					try{
-						Thread.sleep(1);
-						milliSeconds++;
-					}catch(Exception ex){
-					}
-				}
+				milliSeconds+=1;
 			}
-		});
+		}, 0, 1);
 	}
 
 	private void setFont(){
@@ -55,21 +53,21 @@ public class Timer implements Paintable{
 
 	public void start(int id){
 		this.id = id;
-		isStarted = true;
-		thread.start();
+		try{
+			shedule();
+		}catch(Exception ex){
+		}
 	}
 
 	public void stop(int id){
 		if(this.id == id){
-			isStarted = false;
+			timer.cancel();
 		}
 	}
 
 	public void reset(){
 		milliSeconds = 0;
-		thread.stop();
-		stop(id);
-		init();
+		timer.cancel();
 	}
 
 	public void paint(Graphics2D gr){

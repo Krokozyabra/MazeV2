@@ -124,7 +124,7 @@ public class Game implements Paintable{
 		gr.fillRect(0, 0, properties.WINDOW_WIDTH, properties.WINDOW_HEIGHT);
 
 		for(int xx = 0; xx < cells.length; xx++){
-			for(int yy = 0; yy < cells[0].length; yy++){
+			for(int yy = 0; yy < cells[xx].length; yy++){
 				if(!isBreaked(xx, yy)){
 					gr.setColor(Colors.notBreakedColor);
 					gr.fillRect(xx * properties.CELL_WIDTH, yy * properties.CELL_HEIGHT, properties.CELL_WIDTH, properties.CELL_HEIGHT);

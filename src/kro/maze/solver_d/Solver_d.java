@@ -13,6 +13,9 @@ public class Solver_d implements Paintable{
 	int x, y;
 
 	Cell[][] cells;
+	
+	
+	int stepNumber = 0;
 
 	public Solver_d(Properties properties, kro.maze.Cell[][] cells){
 		this.properties = properties;
@@ -21,6 +24,31 @@ public class Solver_d implements Paintable{
 		y = properties.BEGIN_CELL_Y;
 
 		setup(cells);
+	}
+
+	public void solve(){
+		while(!(x == properties.END_CELL_X && y == properties.END_CELL_Y)){//пока не конец
+			if(getLocalNotVisitedNeighborCount(x, y) != 0){
+				makeVisited(x, y);
+				mark(x, y);
+	
+				Cell randomNeighborCell = getRandomNotVisistedNeighbor(x, y);//случайный сосед
+				x = randomNeighborCell.x;
+				y = randomNeighborCell.y;
+				
+				makeVisited(x, y);
+				mark(x, y);
+			}else{
+				makeVisitedAgain(x, y);
+				unMark(x, y);
+				goBack(x, y);
+			}
+			try{
+				Thread.sleep(properties.solverDelay);
+			}catch(Exception ex){
+			}
+			stepNumber++;
+		}
 	}
 
 	private void setup(kro.maze.Cell[][] cells){
@@ -37,32 +65,6 @@ public class Solver_d implements Paintable{
 		}
 	}
 
-	public void solve(){
-		int count = 0;
-		while(!(x == properties.END_CELL_X && y == properties.END_CELL_Y)){//пока не конец
-			if(getLocalNotVisitedNeighborCount(x, y) != 0){
-				makeVisited(x, y);
-				mark(x, y);
-
-				Cell randomNeighborCell = getRandomNotVisistedNeighbor(x, y);//случайный сосед
-				x = randomNeighborCell.x;
-				y = randomNeighborCell.y;
-				
-				makeVisited(x, y);
-				mark(x, y);
-			}else{
-				makeVisitedAgain(x, y);
-				unMark(x, y);
-				goBack(x, y);
-			}
-			try{
-				Thread.sleep(properties.delay);
-			}catch(Exception ex){
-			}
-			System.out.println(++count);
-		}
-	}
-	
 	private void goBack(int x, int y){
 		try{
 			if(cells[x + 2][y].wasVisited == 1 && isBreaked(x, y, x + 2, y)){
@@ -217,7 +219,10 @@ public class Solver_d implements Paintable{
 		return count;
 	}
 
-
+	
+	public int getStepNumber(){
+		return stepNumber;
+	}
 
 	public void paint(Graphics2D gr){
 		gr.setColor(Colors.breakedColor);

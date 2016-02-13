@@ -39,10 +39,10 @@ public class Generator_d implements Paintable{
 				makeVisitedAgain(x, y);
 				goBack(x, y);
 			}
-			/*try{
-				Thread.sleep(properties.delay);
+			try{
+				Thread.sleep(properties.generatorDelay);
 			}catch(Exception ex){
-			}*/
+			}
 		}
 		return returnCells();
 	}

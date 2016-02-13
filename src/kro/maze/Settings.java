@@ -7,6 +7,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 
@@ -16,6 +18,8 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.event.AncestorEvent;
+import javax.swing.event.AncestorListener;
 
 import kro.frame.KFrame;
 import kro.maze.Main.Mode;
@@ -25,13 +29,17 @@ public class Settings extends JFrame{
 	JLabel heightLabel = new JLabel("Высота поля, клетки: ");
 	JLabel cellWidthLabel = new JLabel("Ширина клетки, пиксели: ");
 	JLabel cellHeightLabel = new JLabel("Высота клетки, пиксели: ");
-	JLabel delayLabel = new JLabel("Задержка, мс: ");
+	JLabel delaySolverLabel = new JLabel("Задержка(прохождение), мс: ");
+	JLabel delayGeneratorLabel = new JLabel("Задержка(генерация), мс: ");
+	
+	JLabel infoLabel = new JLabel("<html><body text=\"ff0000\" textsize=\"20\"><h5><i><b>Пишет \"Некорректно введено число\"?</i></b></h5></body></html>");
 
 	JTextField widthField = new JTextField(5);
 	JTextField heightField = new JTextField(5);
 	JTextField cellWidthField = new JTextField(5);
 	JTextField cellHeightField = new JTextField(5);
-	JTextField delayField = new JTextField(5);
+	JTextField delaySolverField = new JTextField(5);
+	JTextField delayGeneratorField = new JTextField(5);
 	
 	JFrame jFrame;
 	KFrame kFrame;
@@ -55,7 +63,7 @@ public class Settings extends JFrame{
 	private void showFrame(){
 		jFrame = new JFrame("Настройки");
 		jFrame.setLayout(new FlowLayout());
-		JPanel jPanel = new JPanel(new GridLayout(6, 2));
+		JPanel jPanel = new JPanel(new GridLayout(8, 2));
 
 		jPanel.add(widthLabel);
 		jPanel.add(widthField);
@@ -69,10 +77,15 @@ public class Settings extends JFrame{
 		jPanel.add(cellHeightLabel);
 		jPanel.add(cellHeightField);
 		
-		jPanel.add(delayLabel);
-		jPanel.add(delayField);
-
-
+		jPanel.add(delaySolverLabel);
+		jPanel.add(delaySolverField);
+		
+		jPanel.add(delayGeneratorLabel);
+		jPanel.add(delayGeneratorField);
+		
+		
+		jPanel.add(infoLabel);
+		jPanel.add(new JLabel());
 		jPanel.add(okButton);
 
 
@@ -114,6 +127,31 @@ public class Settings extends JFrame{
 			}
 		});
 		
+		infoLabel.addMouseListener(new MouseListener(){
+			public void mouseReleased(MouseEvent e){
+				JFrame jFrame = new JFrame("Помощь");
+				jFrame.setResizable(false);
+				jFrame.setLocationRelativeTo(null);
+				jFrame.setVisible(true);
+			}
+			
+			public void mousePressed(MouseEvent e){
+				
+			}
+			
+			public void mouseExited(MouseEvent e){
+				
+			}
+			
+			public void mouseEntered(MouseEvent e){
+				
+			}
+			
+			public void mouseClicked(MouseEvent e){
+				
+			}
+		});
+		
 		okButton.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
 				apply();//применение настроек
@@ -140,7 +178,11 @@ public class Settings extends JFrame{
 			
 			main.mode = Mode.GENERATING_d;
 			if(properties.WIDTH != _properties.WIDTH || properties.HEIGHT != _properties.HEIGHT){
-				main.generate_d();//автоматическая генерция после выхода из настроек
+				new Thread(new Runnable(){
+					public void run(){
+						main.generate_d();
+					}
+				}).start();//автоматическая генерция после выхода из настроек
 			}
 			main.settingsIsOpen = false;
 		}catch(Exception ex){
@@ -156,7 +198,8 @@ public class Settings extends JFrame{
 		properties.CELL_WIDTH = Integer.parseInt(cellWidthField.getText());
 		properties.CELL_HEIGHT = Integer.parseInt(cellHeightField.getText());
 		
-		properties.delay = Integer.parseInt(delayField.getText());
+		properties.solverDelay = Integer.parseInt(delaySolverField.getText());
+		properties.generatorDelay = Integer.parseInt(delayGeneratorField.getText());
 		
 		properties.WINDOW_WIDTH = properties.WIDTH * properties.CELL_WIDTH;
 		properties.WINDOW_HEIGHT = properties.HEIGHT * properties.CELL_HEIGHT;
@@ -172,7 +215,8 @@ public class Settings extends JFrame{
 		properties.CELL_WIDTH = _properties.CELL_WIDTH;
 		properties.CELL_HEIGHT = _properties.CELL_HEIGHT;
 		
-		properties.delay = _properties.delay;
+		properties.solverDelay = _properties.solverDelay;
+		properties.generatorDelay = _properties.generatorDelay;
 		
 		properties.WINDOW_WIDTH = properties.WIDTH * properties.CELL_WIDTH;
 		properties.WINDOW_HEIGHT = properties.HEIGHT * properties.CELL_HEIGHT;
@@ -188,7 +232,8 @@ public class Settings extends JFrame{
 		setPlaceHolder(cellWidthField, Integer.toString(properties.CELL_WIDTH));
 		setPlaceHolder(cellHeightField, Integer.toString(properties.CELL_HEIGHT));
 		
-		setPlaceHolder(delayField, Integer.toString(properties.delay));
+		setPlaceHolder(delaySolverField, Integer.toString(properties.solverDelay));
+		setPlaceHolder(delayGeneratorField, Integer.toString(properties.generatorDelay));
 	}
 
 	private void setPlaceHolder(JTextField jTextField, String placeholder){

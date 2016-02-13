@@ -27,6 +27,8 @@ public class Solver_h implements Paintable{
 	boolean moveLeft = true;
 
 	
+	int stepNumber = 0;//кол-во шагов
+	
 	public Solver_h(Properties properties, kro.maze.Cell[][] cells){
 		this.kFrame = kFrame;
 		this.properties = properties;
@@ -35,6 +37,20 @@ public class Solver_h implements Paintable{
 		y = properties.BEGIN_CELL_Y;
 
 		setup(cells);
+	}
+
+	public void solve(){
+		mark(x, y);
+		while(!(x == properties.END_CELL_X && y == properties.END_CELL_Y)){//пока не конец
+			changeDirection();// изменить направление
+			moveToDirection();// двигаться в направлении
+			try{
+				Thread.sleep(properties.solverDelay);
+			}catch(Exception ex){
+			}
+			stepNumber++;
+		}
+	
 	}
 
 	private void setup(kro.maze.Cell[][] cells){
@@ -49,21 +65,6 @@ public class Solver_h implements Paintable{
 				this.cells[xx][yy].type = cells[xx][yy].type;
 			}
 		}
-	}
-
-	public void solve(){
-		mark(x, y);
-		int count = 0;
-		while(!(x == properties.END_CELL_X && y == properties.END_CELL_Y)){//пока не конец
-			changeDirection();// изменить направление
-			moveToDirection();// двигаться в направлении
-			try{
-				Thread.sleep(properties.delay);
-			}catch(Exception ex){
-			}
-			System.out.println(++count);
-		}
-
 	}
 
 	private boolean isMarked(int x, int y){
@@ -178,6 +179,11 @@ public class Solver_h implements Paintable{
 
 	private boolean isBreaked(int x, int y){
 		return cells[x][y].breaked;
+	}
+	
+	
+	public int getStepNumber(){
+		return stepNumber;
 	}
 	
 	public void paint(Graphics2D gr){

@@ -1,29 +1,45 @@
 package kro.maze.solver_w;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics2D;
+import java.util.Date;
+import java.util.Timer;
 
 import kro.frame.Paintable;
 import kro.maze.CellType;
 import kro.maze.Colors;
 import kro.maze.Properties;
-import kro.maze.solver_w.Mover.Direction;
 
 public class Solver_w implements Paintable{
 	Cell[][] cells;
 	Properties properties;
 
-	Mover[] movers = new Mover[999];
-	int moversCount = 1;
-
+	int wave = 1;
+	
+	int stepNumber = 0;
+	
 	public Solver_w(Properties properties, kro.maze.Cell[][] cells){
 		this.properties = properties;
 		setup(cells);
 	}
 
-	private void setup(kro.maze.Cell[][] cells){
-		movers[0] = new Mover(properties.BIGIN_CELL_X, properties.BEGIN_CELL_Y, null);
+	public void solve(){
+		cells[properties.BIGIN_CELL_X][properties.BEGIN_CELL_Y].waveNumber = wave;
+		while(!isEnd()){
+			move();
+			markWaves();
+			wave++;
+			try{
+				Thread.sleep(properties.solverDelay);
+			}catch(Exception ex){
+			}
+			stepNumber++;
+		}
+		markWay();
+	}
 
+	private void setup(kro.maze.Cell[][] cells){
 		this.cells = new Cell[properties.WIDTH][properties.HEIGHT];
 
 		for(int xx = 0; xx < cells.length; xx++){
@@ -37,155 +53,150 @@ public class Solver_w implements Paintable{
 		}
 	}
 
-	public void solve(){
-		int count = 0;
-		while(!isEnd()){
-			makeVisitedAndMarkedMovers();
-			packMovers();
-
-			splitMovers();
-			packMovers();
-
-			move();
-			try{
-				Thread.sleep(properties.delay);
-			}catch(Exception ex){
+	private boolean isEnd(){
+		la: for(int xx = 0; xx < cells.length; xx++){
+			for(int yy = 0; yy < cells[xx].length; yy++){
+				if(xx == properties.END_CELL_X && yy == properties.END_CELL_Y){
+					if(isWave(xx, yy)){
+						return true;
+					}else{
+						return false;
+					}
+				}
 			}
-			System.out.println(++count);
 		}
-		makeVisitedAndMarkedMovers();
-		markWay();
+		return false;
 	}
 
 	private void markWay(){
 		int x = properties.END_CELL_X, y = properties.END_CELL_Y;
-		while(x != properties.BIGIN_CELL_X || y != properties.BEGIN_CELL_Y){
-			markWay(x, y);
-			Cell cell = cells[x][y];
-			x = cell.parent_x;
-			y = cell.parent_y;
-		}
 		markWay(x, y);
+		while(x != properties.BIGIN_CELL_X || y != properties.BEGIN_CELL_Y){
+			long min = -1;
+			int minX = -1, minY = -1;
+			try{
+				if(isBreaked(x, y, x + 2, y)){
+					min = getWaveNumber(x + 2, y);
+					minX = x + 2;
+					minY = y;
+				}
+			}catch(Exception ex){
+			}
+			try{
+				if(isBreaked(x, y, x - 2, y)){
+					if(min != -1){
+						if(min > getWaveNumber(x - 2, y)){
+							min = getWaveNumber(x - 2, y);
+							minX = x - 2;
+							minY = y;
+						}
+					}else{
+						min = getWaveNumber(x - 2, y);
+						minX = x - 2;
+						minY = y;
+					}
+				}
+			}catch(Exception ex){
+			}
+			try{
+				if(isBreaked(x, y, x, y + 2)){
+					if(min != -1){
+						if(min > getWaveNumber(x, y + 2)){
+							min = getWaveNumber(x, y + 2);
+							minX = x;
+							minY = y + 2;
+						}
+					}else{
+						min = getWaveNumber(x, y + 2);
+						minX = x;
+						minY = y + 2;
+					}
+				}
+			}catch(Exception ex){
+			}
+			try{
+				if(isBreaked(x, y, x, y - 2)){
+					if(min != -1){
+						if(min > getWaveNumber(x, y - 2)){
+							min = getWaveNumber(x, y - 2);
+							minX = x;
+							minY = y - 2;
+						}
+					}else{
+						min = getWaveNumber(x, y - 2);
+						minX = x;
+						minY = y - 2;
+					}
+				}
+			}catch(Exception ex){
+			}
+			x = minX;
+			y = minY;
+			markWay(x, y);
+		}
 	}
 
-	private void makeVisitedAndMarkedMovers(){
-		for(int i = 0; i < moversCount; i++){
-			makeVisited(movers[i].x, movers[i].y);
-			mark(movers[i].x, movers[i].y);
+	private void markWaves(){
+		for(int xx = 0; xx < cells.length; xx++){
+			for(int yy = 0; yy < cells[xx].length; yy++){
+				if(isWave(xx, yy)){
+					mark(xx, yy);
+				}
+			}
 		}
 	}
 
 	private void move(){
-		for(int i = 0; i < moversCount; i++){
-			int x = movers[i].x;
-			int y = movers[i].y;
-
-			if(movers[i].direction != null){
-				switch(movers[i].direction){
-					case RIGHT:
-						movers[i].x = x + 2;
-						movers[i].y = y;
-						break;
-					case LEFT:
-						movers[i].x = x - 2;
-						movers[i].y = y;
-						break;
-					case DOWN:
-						movers[i].x = x;
-						movers[i].y = y + 2;
-						break;
-					case UP:
-						movers[i].x = x;
-						movers[i].y = y - 2;
-						break;
-				}
-				movers[i].direction = null;
-			}else{
-				if(!isVisited(x + 2, y) && isBreaked(x, y, x + 2, y)){
-					movers[i].x = x + 2;
-					movers[i].y = y;
-				}else if(!isVisited(x - 2, y) && isBreaked(x, y, x - 2, y)){
-					movers[i].x = x - 2;
-					movers[i].y = y;
-				}else if(!isVisited(x, y + 2) && isBreaked(x, y, x, y + 2)){
-					movers[i].x = x;
-					movers[i].y = y + 2;
-				}else if(!isVisited(x, y - 2) && isBreaked(x, y, x, y - 2)){
-					movers[i].x = x;
-					movers[i].y = y - 2;
-				}
-			}
-
-			cells[movers[i].x][movers[i].y].parent_x = x;
-			cells[movers[i].x][movers[i].y].parent_y = y;//утсановка родителей
-		}
-	}
-
-	private void splitMovers(){
-		for(int i = 0; i < moversCount; i++){
-			int x = movers[i].x;
-			int y = movers[i].y;
-
-			boolean currentIsChanged = false;
-			if(getLocalNotVisitedNeighborCount(x, y) == 0){
-				movers[i] = null;
-			}
-			if(getLocalNotVisitedNeighborCount(x, y) != 0 && getLocalNotVisitedNeighborCount(x, y) != 1 && movers[i].direction == null){
-				if(!isVisited(x + 2, y) && isBreaked(x, y, x + 2, y)){
-					movers[i] = new Mover(x, y, Direction.RIGHT);
-					currentIsChanged = true;
-				}
-				if(!isVisited(x - 2, y) && isBreaked(x, y, x - 2, y)){
-					if(!currentIsChanged){
-						movers[i] = new Mover(x, y, Direction.LEFT);
-						currentIsChanged = true;
-					}else{
-						movers[moversCount] = new Mover(x, y, Direction.LEFT);
-						moversCount++;
-					}
-				}
-				if(!isVisited(x, y + 2) && isBreaked(x, y, x, y + 2)){
-					if(!currentIsChanged){
-						movers[i] = new Mover(x, y, Direction.DOWN);
-						currentIsChanged = true;
-					}else{
-						movers[moversCount] = new Mover(x, y, Direction.DOWN);
-						moversCount++;
-					}
-				}
-				if(!isVisited(x, y - 2) && isBreaked(x, y, x, y - 2)){
-					if(!currentIsChanged){
-						movers[i] = new Mover(x, y, Direction.UP);
-						currentIsChanged = true;
-					}else{
-						movers[moversCount] = new Mover(x, y, Direction.UP);
-						moversCount++;
-					}
+		la: for(int xx = 0; xx < cells.length; xx++){
+			for(int yy = 0; yy < cells[xx].length; yy++){
+				if(wave == getWaveNumber(xx, yy)){
+					makeWaves(xx, yy);
 				}
 			}
 		}
 	}
 
-	private void packMovers(){//уплотнитель двигателей
-		Mover[] moversTemp = new Mover[movers.length];
-		int moversTempCount = 0;
-		for(int i = 0; i < movers.length; i++){
-			if(movers[i] != null){
-				moversTemp[moversTempCount] = movers[i];
-				moversTempCount++;
+	private void makeWaves(int x, int y){
+		try{
+			if(isBreaked(x, y, x + 2, y) && !isWave(x + 2, y)){
+				setWaveNumber(x + 2, y, wave + 1);
 			}
+		}catch(Exception ex){
 		}
-		moversCount = moversTempCount;
-		movers = moversTemp;
+		try{
+			if(isBreaked(x, y, x - 2, y) && !isWave(x - 2, y)){
+				setWaveNumber(x - 2, y, wave + 1);
+			}
+		}catch(Exception ex){
+		}
+		try{
+			if(isBreaked(x, y, x, y + 2) && !isWave(x, y + 2)){
+				setWaveNumber(x, y + 2, wave + 1);
+			}
+		}catch(Exception ex){
+		}
+		try{
+			if(isBreaked(x, y, x, y - 2) && !isWave(x, y - 2)){
+				setWaveNumber(x, y - 2, wave + 1);
+			}
+		}catch(Exception ex){
+		}
 	}
 
-
-	private void makeVisited(int x, int y){
-		cells[x][y].wasVisited = 1;
+	private boolean isWave(int x, int y){
+		if(cells[x][y].waveNumber == Integer.MAX_VALUE){
+			return false;
+		}else{
+			return true;
+		}
 	}
 
-	private void makeVisitedAgain(int x, int y){
-		cells[x][y].wasVisited = 2;
+	private void setWaveNumber(int x, int y, int number){
+		cells[x][y].waveNumber = number;
+	}
+
+	private long getWaveNumber(int x, int y){
+		return cells[x][y].waveNumber;
 	}
 
 	private boolean isMarked(int x, int y){
@@ -210,14 +221,6 @@ public class Solver_w implements Paintable{
 		cells[x][y].marked = true;
 	}
 
-	private boolean isVisited(int x, int y){
-		try{
-			return cells[x][y].wasVisited != 0;
-		}catch(Exception ex){
-		}
-		return true;
-	}
-
 	private boolean isBreaked(int x1, int y1, int x2, int y2){
 		try{
 			return cells[(x1 + x2) / 2][(y1 + y2) / 2].breaked;
@@ -234,53 +237,14 @@ public class Solver_w implements Paintable{
 		return false;
 	}
 
-	private int getLocalNotVisitedNeighborCount(int x, int y){
-		int count = 0;// число НЕПОСЕЩЕННЫХ соседов
-		try{
-			if(cells[x + 2][y].wasVisited == 0 && isBreaked(x, y, x + 2, y)){
-				count++;
-			}
-		}catch(Exception ex){
-		}
-		try{
-			if(cells[x - 2][y].wasVisited == 0 && isBreaked(x, y, x - 2, y)){
-				count++;
-			}
-		}catch(Exception ex){
-		}
-		try{
-			if(cells[x][y + 2].wasVisited == 0 && isBreaked(x, y, x, y + 2)){
-				count++;
-			}
-		}catch(Exception ex){
-		}
-		try{
-			if(cells[x][y - 2].wasVisited == 0 && isBreaked(x, y, x, y - 2)){
-				count++;
-			}
-		}catch(Exception ex){
-		}
-		return count;
-	}
 
-	private boolean isEnd(){
-		for(int i = 0; i < moversCount; i++){
-			try{
-				if(movers[i].x == properties.END_CELL_X && movers[i].y == properties.END_CELL_Y){
-					return true;
-				}
-			}catch(Exception ex){
-			}
-		}
-		return false;
-	}
 
 	public void paint(Graphics2D gr){
 		gr.setColor(Colors.breakedColor);
 		gr.fillRect(0, 0, properties.WINDOW_WIDTH, properties.WINDOW_HEIGHT);
 
 		for(int xx = 0; xx < cells.length; xx++){
-			for(int yy = 0; yy < cells[0].length; yy++){
+			for(int yy = 0; yy < cells[xx].length; yy++){
 				if(!isBreaked(xx, yy)){
 					gr.setColor(Colors.notBreakedColor);
 					gr.fillRect(xx * properties.CELL_WIDTH, yy * properties.CELL_HEIGHT, properties.CELL_WIDTH, properties.CELL_HEIGHT);
@@ -316,4 +280,12 @@ public class Solver_w implements Paintable{
 		}
 
 	}
+	
+	
+	
+	
+	public int getStepNumber(){
+		return stepNumber;
+	}
+	
 }

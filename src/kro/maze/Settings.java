@@ -32,7 +32,7 @@ public class Settings extends JFrame{
 	JLabel delaySolverLabel = new JLabel("Задержка(прохождение), мс: ");
 	JLabel delayGeneratorLabel = new JLabel("Задержка(генерация), мс: ");
 	
-	JLabel infoLabel = new JLabel("<html><body text=\"ff0000\" textsize=\"20\"><h5><i><b>Пишет \"Некорректно введено число\"?</i></b></h5></body></html>");
+	JLabel helpLabel = new JLabel("<html><body text=\"ff0000\" textsize=\"20\"><h9><i><b>Пишет \"Некорректно введено число\"?</i></b></h9></body></html>");
 
 	JTextField widthField = new JTextField(5);
 	JTextField heightField = new JTextField(5);
@@ -84,7 +84,7 @@ public class Settings extends JFrame{
 		jPanel.add(delayGeneratorField);
 		
 		
-		jPanel.add(infoLabel);
+		jPanel.add(helpLabel);
 		jPanel.add(new JLabel());
 		jPanel.add(okButton);
 
@@ -127,12 +127,52 @@ public class Settings extends JFrame{
 			}
 		});
 		
-		infoLabel.addMouseListener(new MouseListener(){
+		helpLabel.addMouseListener(new MouseListener(){
+			boolean helpIsOpened = false;
 			public void mouseReleased(MouseEvent e){
-				JFrame jFrame = new JFrame("Помощь");
-				jFrame.setResizable(false);
-				jFrame.setLocationRelativeTo(null);
-				jFrame.setVisible(true);
+				if(!helpIsOpened){
+					JFrame jFrame = new JFrame("Помощь");
+					jFrame.setResizable(false);
+					jFrame.setLocationRelativeTo(null);
+					
+					JLabel jLabel = new JLabel("<html><body>Итоговая высота окна должна быть <i>не меньше 60</i> пикселей, <br>а ширина <i>не меньше 262</i> пикселей.\nШирина и высота<br> поля должны быть <i>нечетными</i>.</html></body>");
+					jFrame.add(jLabel);
+					jFrame.pack();
+					jFrame.setVisible(true);
+					
+					helpIsOpened = true;
+					
+					jFrame.addWindowListener(new WindowListener(){
+						public void windowOpened(WindowEvent e){
+							
+						}
+						
+						public void windowIconified(WindowEvent e){
+							
+						}
+						
+						public void windowDeiconified(WindowEvent e){
+							
+						}
+						
+						public void windowDeactivated(WindowEvent e){
+							
+						}
+						
+						public void windowClosing(WindowEvent e){
+							helpIsOpened = false;
+							jFrame.dispose();
+						}
+						
+						public void windowClosed(WindowEvent e){
+							
+						}
+						
+						public void windowActivated(WindowEvent e){
+							
+						}
+					});
+				}
 			}
 			
 			public void mousePressed(MouseEvent e){

@@ -245,7 +245,7 @@ public class Main implements Paintable{
 		JMenuBar jMenuBar = new JMenuBar();
 		kFrame.setJMenuBar(jMenuBar);
 
-		JMenu generatingMenu = new JMenu("Сегенерировать лабиринт");
+		JMenu generatingMenu = new JMenu("Генерация");
 		JMenu solvingMenu = new JMenu("Прохождение");
 		JMenu gameMenu = new JMenu("Игра");
 		JMenu otherMenu = new JMenu("Настройки");
@@ -280,7 +280,11 @@ public class Main implements Paintable{
 		generator_dMenuItem.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
 				mode = Mode.GENERATING_d;
-				generate_d();
+				new Thread(new Runnable(){
+					public void run(){
+						generate_d();
+					}
+				}).start();
 			}
 		});
 

@@ -14,12 +14,15 @@ public class Generator_d implements Paintable{
 
 	Cell[][] cells;
 
-	int x = 0, y = 0;
+	int x, y;
 
 
 	public Generator_d(Properties properties){
 		this.properties = properties;
 
+		x = properties.BIGIN_CELL_X;
+		y = properties.BEGIN_CELL_Y;
+		
 		setup();// настройка клеток, их типа
 
 	}

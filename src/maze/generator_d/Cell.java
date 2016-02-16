@@ -1,8 +1,8 @@
-package kro.maze.generator_d;
+package maze.generator_d;
 
-import kro.maze.CellType;
+import maze.CellType;
 
-public class Cell extends kro.maze.Cell{//для генератора
+public class Cell extends maze.Cell{//для генератора
 	byte wasVisited = 0;//кол-во посещений, только для прохоов
 	
 	public Cell(int x, int y, CellType type){

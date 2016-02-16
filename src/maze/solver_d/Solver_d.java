@@ -1,11 +1,11 @@
-package kro.maze.solver_d;
+package maze.solver_d;
 
 import java.awt.Graphics2D;
 
 import kro.frame.Paintable;
-import kro.maze.CellType;
-import kro.maze.Colors;
-import kro.maze.Properties;
+import maze.CellType;
+import maze.Colors;
+import maze.Properties;
 
 public class Solver_d implements Paintable{
 	Properties properties;
@@ -17,7 +17,7 @@ public class Solver_d implements Paintable{
 	
 	int stepNumber = 0;
 
-	public Solver_d(Properties properties, kro.maze.Cell[][] cells){
+	public Solver_d(Properties properties, maze.Cell[][] cells){
 		this.properties = properties;
 
 		x = properties.BIGIN_CELL_X;
@@ -51,7 +51,7 @@ public class Solver_d implements Paintable{
 		}
 	}
 
-	private void setup(kro.maze.Cell[][] cells){
+	private void setup(maze.Cell[][] cells){
 		this.cells = new Cell[properties.WIDTH][properties.HEIGHT];
 
 		for(int xx = 0; xx < cells.length; xx++){

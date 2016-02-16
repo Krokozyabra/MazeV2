@@ -1,4 +1,4 @@
-package kro.maze;
+package maze;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -31,12 +31,11 @@ import javax.swing.JPopupMenu;
 
 import kro.frame.KFrame;
 import kro.frame.Paintable;
-import kro.maze.game.Game;
-import kro.maze.generator_d.Generator_d;
-import kro.maze.solver_d.Solver_d;
-import kro.maze.solver_h.Solver_h;
-import kro.maze.solver_w.Solver_w;
-import kro.maze.solver_w.Solver_w;
+import maze.game.Game;
+import maze.generator_d.Generator_d;
+import maze.solver_d.Solver_d;
+import maze.solver_h.Solver_h;
+import maze.solver_w.Solver_w;
 
 public class Main implements Paintable{
 	enum Mode{
@@ -431,10 +430,11 @@ public class Main implements Paintable{
 		int _delay = properties.generatorDelay;
 		properties.generatorDelay = 0;
 		
-		int count = 50001;
+		int count = 10001;
 		int[][] times = new int[count][3];
 		int[][] steps = new int[count][3];
 		for(int i = 0; i < count; i++){
+			System.out.println(i);
 			mode = Mode.GENERATING_d;
 			generate_d();
 			

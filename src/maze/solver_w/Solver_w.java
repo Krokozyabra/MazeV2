@@ -1,4 +1,4 @@
-package kro.maze.solver_w;
+package maze.solver_w;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -7,9 +7,9 @@ import java.util.Date;
 import java.util.Timer;
 
 import kro.frame.Paintable;
-import kro.maze.CellType;
-import kro.maze.Colors;
-import kro.maze.Properties;
+import maze.CellType;
+import maze.Colors;
+import maze.Properties;
 
 public class Solver_w implements Paintable{
 	Cell[][] cells;
@@ -19,7 +19,7 @@ public class Solver_w implements Paintable{
 	
 	int stepNumber = 0;
 	
-	public Solver_w(Properties properties, kro.maze.Cell[][] cells){
+	public Solver_w(Properties properties, maze.Cell[][] cells){
 		this.properties = properties;
 		setup(cells);
 	}
@@ -39,7 +39,7 @@ public class Solver_w implements Paintable{
 		markWay();
 	}
 
-	private void setup(kro.maze.Cell[][] cells){
+	private void setup(maze.Cell[][] cells){
 		this.cells = new Cell[properties.WIDTH][properties.HEIGHT];
 
 		for(int xx = 0; xx < cells.length; xx++){

@@ -1,4 +1,4 @@
-package kro.maze;
+package maze;
 
 import java.awt.Color;
 import java.awt.FlowLayout;
@@ -22,7 +22,7 @@ import javax.swing.event.AncestorEvent;
 import javax.swing.event.AncestorListener;
 
 import kro.frame.KFrame;
-import kro.maze.Main.Mode;
+import maze.Main.Mode;
 import sun.net.www.content.image.jpeg;
 
 public class Settings extends JFrame{
@@ -291,6 +291,10 @@ public class Settings extends JFrame{
 			properties.END_CELL_X = Integer.parseInt(string1);
 			String string2 = string.substring(colonPos + 1);
 			properties.END_CELL_Y = Integer.parseInt(string2);
+			if(properties.END_CELL_X == _properties.END_CELL_X && properties.END_CELL_Y == _properties.END_CELL_Y){
+				properties.END_CELL_X = properties.WIDTH - 1;
+				properties.END_CELL_Y = properties.HEIGHT - 1;
+			}
 			if(properties.END_CELL_X % 2 != 0 || properties.END_CELL_Y % 2 != 0 || !containPoint(properties.END_CELL_X, properties.END_CELL_Y)){
 				throw new Exception();
 			}
@@ -317,8 +321,11 @@ public class Settings extends JFrame{
 		properties.WINDOW_WIDTH = properties.WIDTH * properties.CELL_WIDTH;
 		properties.WINDOW_HEIGHT = properties.HEIGHT * properties.CELL_HEIGHT;
 
-		properties.END_CELL_X = properties.WIDTH - 1;
-		properties.END_CELL_Y = properties.HEIGHT - 1;
+		properties.BIGIN_CELL_X = _properties.BIGIN_CELL_X;
+		properties.BEGIN_CELL_Y = _properties.BEGIN_CELL_Y;
+		
+		properties.END_CELL_X = _properties.END_CELL_X;
+		properties.END_CELL_Y = _properties.END_CELL_Y;
 	}
 
 	private void setTextFromProperties(){

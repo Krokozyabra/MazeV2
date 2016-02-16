@@ -1,4 +1,4 @@
-package kro.maze.game;
+package maze.game;
 
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
@@ -10,10 +10,10 @@ import com.sun.javafx.scene.traversal.Direction;
 
 import kro.frame.KFrame;
 import kro.frame.Paintable;
-import kro.maze.Cell;
-import kro.maze.CellType;
-import kro.maze.Colors;
-import kro.maze.Properties;
+import maze.Cell;
+import maze.CellType;
+import maze.Colors;
+import maze.Properties;
 
 public class Game implements Paintable{
 	enum Direction{

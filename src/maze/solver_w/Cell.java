@@ -1,6 +1,6 @@
-package kro.maze.solver_w;
+package maze.solver_w;
 
-public class Cell extends kro.maze.Cell{
+public class Cell extends maze.Cell{
 	int waveNumber = Integer.MAX_VALUE;
 	boolean dontTouch = false;
 	boolean marked = false;

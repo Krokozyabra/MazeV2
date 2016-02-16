@@ -1,12 +1,12 @@
-package kro.maze.solver_h;
+package maze.solver_h;
 
 import java.awt.Graphics2D;
 
 import kro.frame.KFrame;
 import kro.frame.Paintable;
-import kro.maze.CellType;
-import kro.maze.Colors;
-import kro.maze.Properties;
+import maze.CellType;
+import maze.Colors;
+import maze.Properties;
 
 public class Solver_h implements Paintable{
 	//по правилу левой(правой) руки
@@ -29,7 +29,7 @@ public class Solver_h implements Paintable{
 	
 	int stepNumber = 0;//кол-во шагов
 	
-	public Solver_h(Properties properties, kro.maze.Cell[][] cells){
+	public Solver_h(Properties properties, maze.Cell[][] cells){
 		this.kFrame = kFrame;
 		this.properties = properties;
 
@@ -53,7 +53,7 @@ public class Solver_h implements Paintable{
 	
 	}
 
-	private void setup(kro.maze.Cell[][] cells){
+	private void setup(maze.Cell[][] cells){
 		this.cells = new Cell[properties.WIDTH][properties.HEIGHT];
 
 		for(int xx = 0; xx < cells.length; xx++){

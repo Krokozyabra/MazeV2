@@ -1,4 +1,4 @@
-package kro.maze;
+package maze;
 
 import java.awt.Color;
 import java.io.Serializable;

@@ -1,12 +1,12 @@
-package kro.maze.generator_d;
+package maze.generator_d;
 
 import java.awt.Graphics2D;
 
 import kro.frame.KFrame;
 import kro.frame.Paintable;
-import kro.maze.CellType;
-import kro.maze.Colors;
-import kro.maze.Properties;
+import maze.CellType;
+import maze.Colors;
+import maze.Properties;
 
 public class Generator_d implements Paintable{
 	//метод поиска вглубину по графу
@@ -27,7 +27,7 @@ public class Generator_d implements Paintable{
 
 	}
 
-	public kro.maze.Cell[][] generate(){
+	public maze.Cell[][] generate(){
 		while(getGlobalNotVisitedCellsCount() != 0){// общее кол-во пустых клеток
 			if(getLocalNotVisitedNeighborCount(x, y) != 0){//кол-во соседних неосещенных €чеек
 				makeVisited(x, y);
@@ -225,8 +225,8 @@ public class Generator_d implements Paintable{
 		}
 	}
 
-	private kro.maze.Cell[][] returnCells(){
-		return (kro.maze.Cell[][]) cells;
+	private maze.Cell[][] returnCells(){
+		return (maze.Cell[][]) cells;
 	}
 
 	public void paint(Graphics2D gr){

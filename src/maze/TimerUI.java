@@ -1,21 +1,13 @@
-package kro.maze;
+package maze;
 
-import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontFormatException;
 import java.awt.Graphics2D;
-import java.awt.Shape;
-import java.awt.font.TextLayout;
-import java.awt.geom.AffineTransform;
 import java.io.IOException;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import com.sun.org.apache.bcel.internal.generic.NEW;
-
-import kro.Downloader;
 import kro.frame.Paintable;
-import kro.maze.Main.Mode;
 
 public class TimerUI implements Paintable{
 	volatile int milliSeconds = 0;
@@ -44,7 +36,7 @@ public class TimerUI implements Paintable{
 
 	private void setFont(){
 		try{
-			font = Font.createFont(Font.PLAIN, Downloader.class.getResourceAsStream("font/font.ttf"));
+			font = Font.createFont(Font.PLAIN, TimerUI.class.getResourceAsStream("font/font.ttf"));
 			font = font.deriveFont(Font.PLAIN, 25);
 		}catch(FontFormatException e){
 		}catch(IOException e){

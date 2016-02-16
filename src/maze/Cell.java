@@ -1,4 +1,4 @@
-package kro.maze;
+package maze;
 
 public class Cell{
 	public int x, y;
